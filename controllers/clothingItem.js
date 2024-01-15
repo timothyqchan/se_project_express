@@ -7,55 +7,70 @@ const {
 } = require("../utils/errors");
 
 const createItem = (req, res) => {
-  console.log(req);
-  console.log(req.body);
-
-  const { name, weather, imageURL } = req.body;
-  ClothingItem.create({ name, weather, imageURL })
+  const { name, weather, imageUrl } = req.body;
+  ClothingItem.create({ name, weather, imageUrl })
     .then((item) => {
-      console.log(item);
       res.send({ data: item });
     })
     .catch((e) => {
-      res.status(500).send({ message: "Error from createItem", e });
+      if (e.name === "ValidationError") {
+        return res
+          .status(INVALID_DATA_ERROR)
+          .send({ message: "Invalid Credentials" });
+      }
+      return res
+        .status(DEFAULT_ERROR)
+        .send({ message: "Internal Server Error" });
     });
 };
 
 const getItems = (req, res) => {
   ClothingItem.find({})
-    .then((items) => {
-      res.status(200).send(items);
-    })
-    .catch((e) => {
-      res.status(500).send({ message: "Error from getItems", e });
-    });
-};
-
-const updateItem = (req, res) => {
-  const { itemId } = req.params;
-  const { imageURL } = req.body;
-
-  ClothingItem.findByIdAndUpdate(itemId, { $set: { imageURL } })
     .orFail()
-    .then((item) => {
-      res.status(200).send({ data: item });
+    .then((items) => {
+      res.status(REQUEST_SUCCESSFUL).send(items);
     })
-    .catch((e) => {
-      res.status(500).send({ message: "Error from updateItem", e });
+    .catch(() => {
+      res.status(DEFAULT_ERROR).send({ message: "Internal Server Error" });
     });
 };
+
+// const updateItem = (req, res) => {
+//   const { itemId } = req.params;
+//   const { imageUrl } = req.body;
+
+//   ClothingItem.findByIdAndUpdate(itemId, { $set: { imageUrl } })
+//     .orFail()
+//     .then((item) => {
+//       res.status(REQUEST_SUCCESSFUL).send({ data: item });
+//     })
+//     .catch((e) => {
+//       res.status(DEFAULT_ERROR).send({ message: "Internal Server Error" });
+//     });
+// };
 
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
-  console.log(itemId);
 
   ClothingItem.findByIdAndDelete(itemId)
     .orFail()
-    .then((item) => {
-      res.status(204).send({});
+    .then(() => {
+      res
+        .status(REQUEST_SUCCESSFUL)
+        .send({ message: "Item ${itemId} Deleted" });
     })
     .catch((e) => {
-      res.status(500).send({ message: "Error from deleteItem", e });
+      if (e.name === "CastError") {
+        res
+          .status(INVALID_DATA_ERROR)
+          .send({ message: "Unauthorized To Delete Item" });
+      } else if (e.name === "DocumentNotFoundError") {
+        res
+          .status(NOT_FOUND_ERROR)
+          .send({ message: `${e.name} Error On Deleting Item` });
+      } else {
+        res.status(DEFAULT_ERROR).send({ message: "deleteItem Failed" });
+      }
     });
 };
 
@@ -70,13 +85,12 @@ const likeItem = (req, res) => {
   )
     .orFail()
     .then((item) => {
-      res.status(200).send({ data: item });
+      res.status(REQUEST_SUCCESSFUL).send({ data: item });
     })
     .catch((err) => {
-      console.error(err);
       if (err.name === "DocumentNotFoundError") {
         res
-          .status(NOTFOUND_ERROR)
+          .status(NOT_FOUND_ERROR)
           .send({ message: `${err.name} Error On likeItem` });
       } else if (err.name === "CastError") {
         res.status(INVALID_DATA_ERROR).send({ message: err.message });
@@ -96,12 +110,11 @@ const unlikeItem = (req, res) => {
     { new: true },
   )
     .orFail()
-    .then((item) => res.status(200).send({ data: item }))
+    .then((item) => res.status(REQUEST_SUCCESSFUL).send({ data: item }))
     .catch((err) => {
-      console.error(err);
       if (err.name === "DocumentNotFoundError") {
         res
-          .status(NOTFOUND_ERROR)
+          .status(NOT_FOUND_ERROR)
           .send({ message: `${err.name} Error On dislikeItem` });
       } else if (err.name === "CastError") {
         res.status(INVALID_DATA_ERROR).send({ message: err.message });
@@ -114,7 +127,6 @@ const unlikeItem = (req, res) => {
 module.exports = {
   createItem,
   getItems,
-  updateItem,
   deleteItem,
   likeItem,
   unlikeItem,
