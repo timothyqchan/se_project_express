@@ -8,7 +8,7 @@ const {
 
 const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
-  ClothingItem.create({ name, weather, imageUrl })
+  ClothingItem.create({ name, weather, imageUrl, owner: req.user._id })
     .then((item) => {
       res.send({ data: item });
     })
@@ -26,7 +26,6 @@ const createItem = (req, res) => {
 
 const getItems = (req, res) => {
   ClothingItem.find({})
-    .orFail()
     .then((items) => {
       res.status(REQUEST_SUCCESSFUL).send(items);
     })
@@ -51,13 +50,14 @@ const getItems = (req, res) => {
 
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
+  const { _id: userId } = req.user;
 
   ClothingItem.findByIdAndDelete(itemId)
     .orFail()
     .then(() => {
       res
         .status(REQUEST_SUCCESSFUL)
-        .send({ message: "Item ${itemId} Deleted" });
+        .send({ message: `Item ${itemId} Deleted` });
     })
     .catch((e) => {
       if (e.name === "CastError") {

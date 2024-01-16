@@ -25,7 +25,7 @@ const createUser = (req, res) => {
 };
 
 const getUser = (req, res) => {
-  const userId = req.params.userId;
+  const { userId } = req.params.userId;
 
   User.findById(userId)
     .orFail()
@@ -43,7 +43,6 @@ const getUser = (req, res) => {
 
 const getUsers = (req, res) => {
   User.find({})
-    .orFail()
     .then((users) => res.status(REQUEST_SUCCESSFUL).send(users))
     .catch(() => {
       res.status(DEFAULT_ERROR).send({ message: "Internal Server Error" });
