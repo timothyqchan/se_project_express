@@ -4,6 +4,7 @@ const {
   INVALID_DATA_ERROR,
   NOT_FOUND_ERROR,
   DEFAULT_ERROR,
+  FORBIDDEN_ERROR,
 } = require("../utils/errors");
 
 const createItem = (req, res) => {
@@ -12,8 +13,8 @@ const createItem = (req, res) => {
     .then((item) => {
       res.send({ data: item });
     })
-    .catch((e) => {
-      if (e.name === "ValidationError") {
+    .catch((err) => {
+      if (err.name === "ValidationError") {
         return res
           .status(INVALID_DATA_ERROR)
           .send({ message: "Invalid Credentials" });
@@ -50,24 +51,31 @@ const getItems = (req, res) => {
 
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
-  // const { _id: userId } = req.user;
+  const { _id: userId } = req.user;
 
-  ClothingItem.findByIdAndDelete(itemId)
-    .orFail()
-    .then(() => {
-      res
-        .status(REQUEST_SUCCESSFUL)
-        .send({ message: `Item ${itemId} Deleted` });
-    })
-    .catch((e) => {
-      if (e.name === "CastError") {
+  ClothingItem.findOne({ _id: itemId })
+    .then((item) => {
+      if (!item) {
+        return Promise.reject(new Error("ID cannot be found"));
+      }
+      if (!item.owner.equals(userId)) {
+        return Promise.reject(new Error("You do not own this item"));
+      }
+      return ClothingItem.deleteOne({ _id: itemId, owner: userId }).then(() => {
         res
-          .status(INVALID_DATA_ERROR)
-          .send({ message: "Unauthorized To Delete Item" });
-      } else if (e.name === "DocumentNotFoundError") {
+          .status(REQUEST_SUCCESSFUL)
+          .send({ message: `Item ${itemId} Deleted` });
+      });
+    })
+    .catch((err) => {
+      if (err.name === "CastError") {
+        res.status(INVALID_DATA_ERROR).send({ message: err.message });
+      } else if (err.message === "You do not own this item") {
+        res.status(FORBIDDEN_ERROR).send({ message: err.message });
+      } else if (err.message === "ID cannot be found") {
         res
           .status(NOT_FOUND_ERROR)
-          .send({ message: `${e.name} Error On Deleting Item` });
+          .send({ message: `${err.name} Error On Deleting Item` });
       } else {
         res.status(DEFAULT_ERROR).send({ message: "deleteItem Failed" });
       }
