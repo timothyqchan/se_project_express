@@ -11,6 +11,6 @@ const { handleAuthorization } = require("../middlewares/auth");
 router.get("/me", handleAuthorization, getUser);
 
 // Update
-router.put("/me", handleAuthorization, updateUser);
+router.patch("/me", handleAuthorization, updateUser);
 
 module.exports = router;

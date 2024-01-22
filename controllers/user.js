@@ -72,9 +72,9 @@ const loginUser = (req, res) => {
 };
 
 const getUser = (req, res) => {
-  const { userId } = req.params;
+  // const { userId } = req.params;
 
-  User.findById(userId)
+  User.findById(req.user._id)
     .then((user) => {
       if (!user) {
         return Promise.reject(new Error("User not found"));
