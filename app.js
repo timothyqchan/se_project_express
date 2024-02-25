@@ -5,16 +5,16 @@ const express = require("express");
 
 const mongoose = require("mongoose");
 
+const cors = require("cors");
+
 const routes = require("./routes");
 
 const errorHandler = require("./middlewares/error-handler");
 
 const { requestLogger, errorLogger } = require("./middlewares/logger");
 
-const { PORT = 3001 } = process.env;
+// const { PORT = 3001 } = process.env;
 const app = express();
-
-const cors = require("cors");
 
 app.use(
   cors({
@@ -23,7 +23,7 @@ app.use(
   }),
 );
 
-app.use(errors());
+// app.use(errors());
 
 app.use(errorHandler);
 
