@@ -2,15 +2,19 @@ const router = require("express").Router();
 const { loginUser, createUser } = require("../controllers/user");
 const clothingItem = require("./clothingItem");
 const user = require("./user");
-const { NOT_FOUND_ERROR } = require("../utils/errors");
+const {
+  userBodyValidator,
+  userAuthenticationValidator,
+} = require("../middlewares/validation");
+const { NotFoundError } = require("../errors/notFoundError");
 
 router.use("/items", clothingItem);
 router.use("/users", user);
-router.post("/signup", createUser);
-router.post("/signin", loginUser);
+router.post("/signup", userBodyValidator, createUser);
+router.post("/signin", userAuthenticationValidator, loginUser);
 
-router.use((req, res) => {
-  res.status(NOT_FOUND_ERROR).send({ message: "router not found" });
+router.use(() => {
+  throw new NotFoundError("Address does not exist");
 });
 
 module.exports = router;

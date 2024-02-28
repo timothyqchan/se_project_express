@@ -1,5 +1,5 @@
-// Do not forget to replace the #
-const JWT_SECRET = "#";
+const JWT_SECRET =
+  "C90FE48D4D1191DF47FA8D6014EAF405DB7B5E1CA40AA26E8B9AC42DAD67CC50";
 
 module.exports = {
   JWT_SECRET,
