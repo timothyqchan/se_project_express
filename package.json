@@ -1,13 +1,15 @@
 {
   "name": "se_project_express",
   "version": "1.0.0",
-  "description": "TripleTen project-12",
+  "description": "TripleTen project_express",
   "main": "index.js",
   "scripts": {
     "test": "jest --coverage",
     "lint": "npx eslint .",
     "start": "node server.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "proxy": "http://localhost:3001",
+    "homepage": "."
   },
   "repository": {
     "type": "git",

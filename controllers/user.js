@@ -2,10 +2,10 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../utils/config");
 const User = require("../models/user");
-const NotFoundError = require("../errors/notFound");
-const UnauthorizedError = require("../errors/unauthorizedError");
-const ConflictError = require("../errors/confilctError");
-const InvalidError = require("../errors/invalidError");
+const NotFoundError = require("../errors/NotFoundError");
+const UnauthorizedError = require("../errors/UnauthorizedError");
+const ConflictError = require("../errors/ConflictError");
+const InvalidError = require("../errors/InvalidDataError");
 
 const createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
@@ -37,36 +37,27 @@ const createUser = (req, res, next) => {
     });
 };
 
-const loginUser = (req, res) => {
+const loginUser = (req, res, next) => {
   const { email, password } = req.body;
-
-  if (!email || !password) {
-    res.status(InvalidError).send({ message: "Invalid credentials" });
-    return;
-  }
-
   User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
-      res.send({ token });
+      res.send({
+        token,
+      });
     })
     .catch((err) => {
-      console.error(err);
-      next(new UnauthorizedError("Invalid Credentials"));
+      next(err);
     });
 };
 
 const getUser = (req, res, next) => {
-  const { _id: userId } = req.user;
-
-  User.findById(userId)
+  User.findById(req.user._id)
+    .orFail(new NotFoundError("User not found"))
     .then((user) => {
-      if (!user) {
-        next(new NotFoundError("User not found"));
-      }
-      return res.send({ data: user });
+      res.send({ data: user });
     })
     .catch((err) => {
       next(err);
@@ -81,27 +72,19 @@ const getUser = (req, res, next) => {
 //     });
 // };
 
-const updateUser = (req, res) => {
+const updateUser = (req, res, next) => {
   const { name, avatar } = req.body;
-  const userId = req.user._id;
-
   User.findByIdAndUpdate(
-    userId,
+    req.user._id,
     { name, avatar },
-    { new: true, runValidators: true },
+    { runValidators: true, new: true },
   )
+    .orFail(new NotFoundError("User not found"))
     .then((user) => {
-      if (!user) {
-        next(new NotFoundError("User not found"));
-      }
-      return res.send({ data: user });
+      res.send({ data: user });
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
-        next(new InvalidError("Validation Error"));
-      } else {
-        next(err);
-      }
+      next(err);
     });
 };
 

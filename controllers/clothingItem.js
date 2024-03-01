@@ -1,7 +1,7 @@
 const ClothingItem = require("../models/clothingItem");
-const { InvalidDataError } = require("../errors/invalidDataError");
-const { NotFoundError } = require("../errors/notFoundError");
-const { ForbiddenError } = require("../errors/forbiddenError");
+const InvalidDataError = require("../errors/InvalidDataError");
+const NotFoundError = require("../errors/NotFoundError");
+const ForbiddenError = require("../errors/ForbiddenError");
 
 const createItem = (req, res, next) => {
   const { name, weather, imageUrl } = req.body;
@@ -23,7 +23,7 @@ const getItems = (req, res, next) => {
     .then((items) => {
       res.send(items);
     })
-    .catch(() => {
+    .catch((err) => {
       next(err);
     });
 };
@@ -43,23 +43,23 @@ const getItems = (req, res, next) => {
 // };
 
 const deleteItem = (req, res, next) => {
-  const { itemId } = req.params;
-  const { _id: userId } = req.user;
-
-  ClothingItem.findOne({ _id: itemId })
+  ClothingItem.findById(req.params.itemId)
+    .orFail(new NotFoundError("Item ID cannot be found"))
     .then((item) => {
-      if (!item) {
-        next(new NotFoundError("Item ID cannot be found"));
+      if (item.owner.toString() === req.user._id) {
+        ClothingItem.findByIdAndRemove(item._id)
+          .orFail()
+          .then(() => {
+            res.send({ data: item });
+          })
+          .catch((err) => {
+            next(err);
+          });
+      } else {
+        throw new ForbiddenError("You do not own this item");
       }
-      if (!item?.owner?.equals(userId)) {
-        next(new ForbiddenError("You do not own this item"));
-      }
-      return ClothingItem.deleteOne({ _id: itemId, owner: userId }).then(() => {
-        res.status(201).send({ message: "Item deleted" });
-      });
     })
     .catch((err) => {
-      console.error(err);
       next(err);
     });
 };

@@ -1,7 +1,7 @@
 const { Joi, celebrate } = require("celebrate");
 const validator = require("validator");
 
-const validateURL = (value, helpers) => {
+const validateUrl = (value, helpers) => {
   if (validator.isURL(value)) {
     return value;
   }
@@ -16,7 +16,7 @@ const createItemValidator = celebrate({
       "string.empty": "The 'name' field is required",
     }),
     weather: Joi.string().required.valid("hot", "warm", "cold"),
-    imageUrl: Joi.string().required().custom(validateURL).messages({
+    imageUrl: Joi.string().required().custom(validateUrl).messages({
       "string.empty": "The 'imageUrl' field must be filled in",
       "string.uri": "The 'imageUrl' field must be a valid url",
     }),
@@ -30,7 +30,7 @@ const userBodyValidator = celebrate({
       "string.max": "The maximum length of the 'name' field is 30 characters",
       "string.empty": "The 'name' field is required",
     }),
-    avatar: Joi.string().required().custom(validateURL).messages({
+    avatar: Joi.string().required().custom(validateUrl).messages({
       "string.empty": "The 'imageUrl' field must be filled in",
       "string.uri": "The 'imageUrl' field must be a valid url",
     }),

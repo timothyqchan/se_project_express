@@ -1,4 +1,4 @@
-class invalidDataError extends Error {
+class InvalidDataError extends Error {
   constructor(message) {
     super(message);
     this.name = "INVALID_DATA_ERROR";
@@ -6,4 +6,4 @@ class invalidDataError extends Error {
   }
 }
 
-module.exports = invalidDataError;
+module.exports = InvalidDataError;

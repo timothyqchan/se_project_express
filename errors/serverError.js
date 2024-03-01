@@ -1,4 +1,4 @@
-class serverError extends Error {
+class ServerError extends Error {
   constructor(message) {
     super(message);
     this.name = "DEFAULT_ERROR";
@@ -6,4 +6,4 @@ class serverError extends Error {
   }
 }
 
-module.exports = serverError;
+module.exports = ServerError;
