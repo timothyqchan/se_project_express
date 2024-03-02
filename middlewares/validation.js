@@ -15,7 +15,7 @@ const createItemValidator = celebrate({
       "string.max": "The maximum length of the 'name' field is 30 characters",
       "string.empty": "The 'name' field is required",
     }),
-    weather: Joi.string().required.valid("hot", "warm", "cold"),
+    weather: Joi.string().required().valid("hot", "warm", "cold"),
     imageUrl: Joi.string().required().custom(validateUrl).messages({
       "string.empty": "The 'imageUrl' field must be filled in",
       "string.uri": "The 'imageUrl' field must be a valid url",
@@ -59,7 +59,7 @@ const userProfileInfoBodyValidator = celebrate({
 
 const userAuthenticationValidator = celebrate({
   body: Joi.object().keys({
-    email: Joi.string().required.email().messages({
+    email: Joi.string().required().email().messages({
       "string.empty": "The 'email' field must be filled in",
     }),
     password: Joi.string().required().messages({

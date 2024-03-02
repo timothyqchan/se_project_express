@@ -16,4 +16,13 @@ This project contains routes and controllers. They are used to get, create, and 
 
 # You can find the live site to the entire application here:
 
-=> https://timothyqchan.github.io/se_project_react/
+- Front End
+  => https://wtwrproject.crabdance.com
+
+- Back End
+  => https://api.wtwrproject.crabdance.com
+
+To Reviewer for project 15:
+I could not find the errors from npx eslint ./
+I only found 5 warnings from Unexpected console statement
+<img align="center" src="./images/image_for_reviewer.PNG" alt="no errors, 5 warnings">
