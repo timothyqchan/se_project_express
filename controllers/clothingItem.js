@@ -13,7 +13,7 @@ const createItem = (req, res, next) => {
       if (err.name === "ValidationError") {
         next(new InvalidDataError("Invalid data"));
       } else {
-        next(err);
+        return next(err);
       }
     });
 };
