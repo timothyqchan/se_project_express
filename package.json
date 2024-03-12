@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --coverage",
-    "lint": "npx eslint ./",
-    "start": "node server.js",
+    "lint": "npx eslint .",
+    "start": "node app.js",
     "dev": "nodemon app.js"
   },
   "repository": {
@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/timothyqchan/se_project_express",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "celebrate": "^15.0.3",
     "cors": "^2.8.5",
