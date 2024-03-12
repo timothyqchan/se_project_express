@@ -18,7 +18,11 @@ const { PORT = 3001 } = process.env;
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    "Access-Control-Allow-Origin": "https://api.wtwrproject.crabdance.com",
+  }),
+);
 
 app.use(express.json());
 
