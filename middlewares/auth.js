@@ -13,19 +13,14 @@ const handleAuthorization = (req, res, next) => {
   let payload;
 
   try {
-    payload = jwt.verify(
-      token,
-      NODE_ENV === "production" ? JWT_SECRET : "secret-key",
-    );
+    payload = jwt.verify(token, JWT_SECRET);
   } catch (err) {
-    return next(new UnauthorizedError("Authorization token is incorrect"));
+    next(new UnauthorizedError("Authorization token is incorrect"));
   }
 
   req.user = payload;
 
   next();
-
-  return null;
 };
 
 module.exports = { handleAuthorization };
