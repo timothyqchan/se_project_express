@@ -52,8 +52,8 @@ const loginUser = (req, res, next) => {
         token,
       });
     })
-    .catch((err) => {
-      next(err);
+    .catch(() => {
+      next(new UnauthorizedError("Not authorized"));
     });
 };
 

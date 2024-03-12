@@ -14,7 +14,7 @@ router.post("/signup", userBodyValidator, createUser);
 router.post("/signin", userAuthenticationValidator, loginUser);
 
 router.use(() => {
-  throw new NotFoundError("Address does not exist");
+  next(new NotFoundError("Not Found"));
 });
 
 module.exports = router;
