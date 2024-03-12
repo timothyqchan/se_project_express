@@ -17,7 +17,7 @@ This project contains routes and controllers. They are used to get, create, and 
 # You can find the live site to the entire application here:
 
 - Front End
-  => https://wtwrproject.crabdance.com
+  => https://wtwrproject.rainbowcup.com
 
 - Back End
-  => https://api.wtwrproject.crabdance.com
+  => https://api.wtwrproject.rainbowcup.com
