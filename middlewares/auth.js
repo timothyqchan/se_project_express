@@ -13,7 +13,10 @@ const handleAuthorization = (req, res, next) => {
   let payload;
 
   try {
-    payload = jwt.verify(token, JWT_SECRET);
+    payload = jwt.verify(
+      token,
+      NODE_ENV === "production" ? JWT_SECRET : "secret-key",
+    );
   } catch (err) {
     next(new UnauthorizedError("Authorization token is incorrect"));
   }
