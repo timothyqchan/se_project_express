@@ -20,7 +20,7 @@ const app = express();
 
 app.use(
   cors({
-    "Access-Control-Allow-Origin": "https://api.wtwrproject.crabdance.com",
+    "Access-Control-Allow-Origin": "*",
   }),
 );
 
