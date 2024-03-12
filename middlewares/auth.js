@@ -6,7 +6,7 @@ const handleAuthorization = (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith("Bearer ")) {
-    throw new UnauthorizedError("Authorization token is missing");
+    next(new UnauthorizedError("Authorization token is missing"));
   }
 
   const token = authorization.replace("Bearer ", "");
