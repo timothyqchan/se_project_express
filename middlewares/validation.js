@@ -61,6 +61,7 @@ const userAuthenticationValidator = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email().messages({
       "string.empty": "The 'email' field must be filled in",
+      "string.email": 'The "email" field must be a valid email',
     }),
     password: Joi.string().required().messages({
       "string.empty": "The 'email' field must be filled in",
